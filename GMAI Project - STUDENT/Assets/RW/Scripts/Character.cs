@@ -71,9 +71,13 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private int hardLanding = Animator.StringToHash("HardLand");
 
         public StateMachine movementSM;
+        public StateMachine weaponSM;
         public StandingState standing;
         public DuckingState ducking;
         public JumpingState jumping;
+        public DrawState drawSword;
+        public SwingState swingSword;
+        public SheathState sheathSword;
         #endregion
 
         #region Properties
@@ -220,24 +224,32 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private void Start()
         {
             movementSM = new StateMachine();
+            weaponSM = new StateMachine();
 
             standing = new StandingState(this, movementSM);
             ducking = new DuckingState(this, movementSM);
             jumping = new JumpingState(this, movementSM);
+            drawSword = new DrawState(this, weaponSM);
+            swingSword = new SwingState(this, weaponSM);
+            sheathSword = new SheathState(this, weaponSM);
 
             movementSM.Initialize(standing);
+            weaponSM.Initialize(sheathSword);
         }
 
         private void Update()
         {
             movementSM.CurrentState.HandleInput();
-
             movementSM.CurrentState.LogicUpdate();
+
+            weaponSM.CurrentState.HandleInput();
+            weaponSM.CurrentState.LogicUpdate();
         }
 
         private void FixedUpdate()
         {
             movementSM.CurrentState.PhysicsUpdate();
+            weaponSM.CurrentState.PhysicsUpdate();
         }
 
 
