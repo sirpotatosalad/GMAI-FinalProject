@@ -45,5 +45,26 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         {
             UIManager.Instance.Display(this, alignment);
         }
+
+        public virtual void Enter()
+        {
+
+        }
+        public virtual void HandleInput()
+        {
+
+        }
+        public virtual void LogicUpdate()
+        {
+
+        }
+        public virtual void PhysicsUpdate()
+        {
+
+        }
+        public virtual void Exit()
+        {
+
+        }
     }
 }

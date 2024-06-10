@@ -69,6 +69,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private int verticalMoveParam = Animator.StringToHash("V_Speed");
         private int shootParam = Animator.StringToHash("Shoot");
         private int hardLanding = Animator.StringToHash("HardLand");
+
+        public StateMachine movementSM;
+        public StandingState standing;
+        public DuckingState ducking;
+        public JumpingState jumping;
         #endregion
 
         #region Properties
@@ -212,6 +217,28 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         #endregion
 
         #region MonoBehaviour Callbacks
+        private void Start()
+        {
+            movementSM = new StateMachine();
+
+            standing = new StandingState(this, movementSM);
+            ducking = new DuckingState(this, movementSM);
+            jumping = new JumpingState(this, movementSM);
+
+            movementSM.Initialize(standing);
+        }
+
+        private void Update()
+        {
+            movementSM.CurrentState.HandleInput();
+
+            movementSM.CurrentState.LogicUpdate();
+        }
+
+        private void FixedUpdate()
+        {
+            movementSM.CurrentState.PhysicsUpdate();
+        }
 
 
         #endregion
