@@ -112,6 +112,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             }
         }
 
+        public bool IsAnimatorPlaying(int animLayer)
+        {
+            return anim.GetCurrentAnimatorStateInfo(animLayer).normalizedTime <1.0f;
+        }
+
         #endregion
 
         #region Methods
@@ -234,7 +239,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             sheathSword = new SheathState(this, weaponSM);
 
             movementSM.Initialize(standing);
-            weaponSM.Initialize(sheathSword);
+            weaponSM.Initialize(drawSword);
         }
 
         private void Update()
