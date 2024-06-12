@@ -1,0 +1,24 @@
+tree("Root")
+	fallback
+		IsDead
+		tree("Flee")
+		tree("Attack")
+		tree("Chase")
+		Patrol
+		Idle
+
+tree("Flee")
+	sequence
+		IsLow
+		FleePlayer
+
+tree("Attack")
+	sequence
+		IsPlayerInAttackRange
+		GoToPlayer
+		Attack
+
+tree("Chase")
+	sequence
+		IsPlayerVisible
+		GoToPlayer

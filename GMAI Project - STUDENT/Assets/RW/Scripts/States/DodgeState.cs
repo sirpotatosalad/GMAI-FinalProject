@@ -21,6 +21,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private void Dodge()
         {
             character.TriggerAnimation(character.dodgeParam);
+            character.Dodge(5, 1);
         }
 
         public override void LogicUpdate()
