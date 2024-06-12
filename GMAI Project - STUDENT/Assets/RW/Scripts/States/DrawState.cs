@@ -7,8 +7,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
     public class DrawState : State
     {
 
-        private bool sheath = false;
         private bool swing = false;
+        private bool sheath = false;
+        private bool block = false;
         private int drawParam = Animator.StringToHash("DrawMelee");
         // Start is called before the first frame update
         public DrawState(Character character, StateMachine stateMachine) : base(character, stateMachine) { }
@@ -30,8 +31,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public override void HandleInput()
         {
             base.HandleInput();
+            swing = Input.GetKeyDown(KeyCode.F);
             sheath = Input.GetKeyDown(KeyCode.R);
-            swing = Input.GetButtonDown("Fire1");
+            block = Input.GetButton("Fire2");
         }
 
         public override void LogicUpdate()
@@ -41,7 +43,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             {
                 stateMachine.ChangeState(character.sheathSword);
             }
-            else if (swing)
+            else if (swing && !block)
             {
                 stateMachine.ChangeState(character.swingSword);
             }

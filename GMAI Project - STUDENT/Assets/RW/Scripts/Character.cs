@@ -76,6 +76,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public DuckingState ducking;
         public JumpingState jumping;
         public BlockState block;
+        public DodgeState dodge;
         public DrawState drawSword;
         public SwingState swingSword;
         public SheathState sheathSword;
@@ -89,6 +90,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public float JumpForce => data.jumpForce;
         public float MovementSpeed => data.movementSpeed;
         public float CrouchSpeed => data.crouchSpeed;
+        public float BlockMovementSpeed => data.blockMovementSpeed;
         public float RotationSpeed => data.rotationSpeed;
         public float CrouchRotationSpeed => data.crouchRotationSpeed;
         public GameObject MeleeWeapon => data.meleeWeapon;
@@ -99,8 +101,10 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public float MeleeRestThreshold => meleeRestThreshold;
         public int isMelee => Animator.StringToHash("IsMelee");
         public int crouchParam => Animator.StringToHash("Crouch");
-
+        
+        // added extra parameter ints for new player animation states
         public int blockParam => Animator.StringToHash("Block");
+        public int dodgeParam => Animator.StringToHash("Dodge");
 
         public float ColliderSize
         {
@@ -115,9 +119,13 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             }
         }
 
-        public bool IsAnimatorPlaying(int animLayer)
+        // boolean to check if the animator is done playing an animation
+        public bool IsAnimatorPlaying(int animLayer, string stateName)
         {
-            return anim.GetCurrentAnimatorStateInfo(animLayer).normalizedTime <1.0f;
+            //checks if normalized time < 0, i.e. when an animation clip has completed playing
+            return anim.GetCurrentAnimatorStateInfo(animLayer).normalizedTime <1.0f 
+                // check for the specified state via its name
+                && anim.GetCurrentAnimatorStateInfo(animLayer).IsName(stateName);
         }
 
         #endregion
@@ -238,6 +246,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             ducking = new DuckingState(this, movementSM);
             jumping = new JumpingState(this, movementSM);
             block = new BlockState(this, movementSM);
+            dodge = new DodgeState(this, movementSM);
             drawSword = new DrawState(this, weaponSM);
             swingSword = new SwingState(this, weaponSM);
             sheathSword = new SheathState(this, weaponSM);

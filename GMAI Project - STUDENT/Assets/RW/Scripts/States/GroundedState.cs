@@ -36,9 +36,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
     {
         protected float speed;
         protected float rotationSpeed;
+        protected bool isBlocking;
 
         private float horizontalInput;
         private float verticalInput;
+
 
         public GroundedState(Character character, StateMachine stateMachine) : base(character, stateMachine)
         {
@@ -61,7 +63,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public override void PhysicsUpdate()
         {
             base.PhysicsUpdate();
-            character.Move(verticalInput * speed, horizontalInput * speed);
+            if (!isBlocking )
+            {
+                character.Move(verticalInput * speed, horizontalInput * speed);
+            }
+            
         }
 
 

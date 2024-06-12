@@ -38,6 +38,7 @@ public class CharacterData : ScriptableObject
     public GameObject meleeWeapon;
     public float movementSpeed = 150f;
     public float crouchSpeed = 50f;
+    public float blockMovementSpeed = 60f;
     public float crouchColliderHeight = 1f;
     public float normalColliderHeight = 2f;
     public float rotationSpeed = 60f;
