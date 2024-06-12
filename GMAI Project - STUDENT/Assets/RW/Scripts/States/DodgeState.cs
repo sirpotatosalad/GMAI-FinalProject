@@ -15,12 +15,12 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             base.Enter();
             Debug.Log("Entered state: DODGE");
             Dodge();
+            isDodging = true;
         }
 
         private void Dodge()
         {
             character.TriggerAnimation(character.dodgeParam);
-            character.ApplyImpulse(Vector3.forward * character.JumpForce);
         }
 
         public override void LogicUpdate()
@@ -28,10 +28,15 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             base.LogicUpdate();
             if (character.IsAnimatorPlaying(0, "Dodge"))
             {
+                isDodging = false;
                 stateMachine.ChangeState(character.standing);
             }
         }
 
+        public override void Exit()
+        {
+            base.Exit();
+        }
     }
 }
 

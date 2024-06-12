@@ -37,6 +37,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         protected float speed;
         protected float rotationSpeed;
         protected bool isBlocking;
+        protected bool isDodging;
 
         private float horizontalInput;
         private float verticalInput;
@@ -63,7 +64,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public override void PhysicsUpdate()
         {
             base.PhysicsUpdate();
-            if (!isBlocking )
+            if (!isBlocking || !isDodging)
             {
                 character.Move(verticalInput * speed, horizontalInput * speed);
             }
