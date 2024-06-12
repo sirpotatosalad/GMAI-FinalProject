@@ -36,6 +36,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
     {
         private bool jump;
         private bool crouch;
+        private bool block;
 
         public StandingState(Character character, StateMachine stateMachine) : base(character, stateMachine)
         {
@@ -55,6 +56,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             base.HandleInput();
             crouch = Input.GetButtonDown("Fire3");
             jump = Input.GetButtonDown("Jump");
+            block = Input.GetButton("Fire2");
         }
 
         public override void LogicUpdate()
@@ -67,6 +69,10 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             else if (jump)
             {
                 stateMachine.ChangeState(character.jumping);
+            }
+            else if (block)
+            {
+
             }
         }
 

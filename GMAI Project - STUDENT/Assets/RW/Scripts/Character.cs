@@ -75,6 +75,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public StandingState standing;
         public DuckingState ducking;
         public JumpingState jumping;
+        public BlockState block;
         public DrawState drawSword;
         public SwingState swingSword;
         public SheathState sheathSword;
@@ -98,6 +99,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public float MeleeRestThreshold => meleeRestThreshold;
         public int isMelee => Animator.StringToHash("IsMelee");
         public int crouchParam => Animator.StringToHash("Crouch");
+
+        public int blockParam => Animator.StringToHash("Block");
 
         public float ColliderSize
         {
@@ -234,6 +237,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             standing = new StandingState(this, movementSM);
             ducking = new DuckingState(this, movementSM);
             jumping = new JumpingState(this, movementSM);
+            block = new BlockState(this, movementSM);
             drawSword = new DrawState(this, weaponSM);
             swingSword = new SwingState(this, weaponSM);
             sheathSword = new SheathState(this, weaponSM);
