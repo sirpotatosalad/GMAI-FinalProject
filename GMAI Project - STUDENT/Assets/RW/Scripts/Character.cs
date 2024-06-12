@@ -28,6 +28,7 @@
  * THE SOFTWARE.
  */
 
+using System.Collections;
 using UnityEngine;
 
 namespace RayWenderlich.Unity.StatePatternInUnity
@@ -90,7 +91,6 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public float JumpForce => data.jumpForce;
         public float MovementSpeed => data.movementSpeed;
         public float CrouchSpeed => data.crouchSpeed;
-        public float BlockMovementSpeed => data.blockMovementSpeed;
         public float RotationSpeed => data.rotationSpeed;
         public float CrouchRotationSpeed => data.crouchRotationSpeed;
         public GameObject MeleeWeapon => data.meleeWeapon;
@@ -147,6 +147,29 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 
             anim.SetFloat(horizonalMoveParam, GetComponent<Rigidbody>().angularVelocity.y);
             anim.SetFloat(verticalMoveParam, speed * Time.deltaTime);
+        }
+
+        public void Dodge(float distance, float duration)
+        {
+            StartCoroutine(DodgeCoroutine(distance, duration));
+        }
+
+        private IEnumerator DodgeCoroutine(float distance, float duration)
+        {
+            Vector3 startPosition = transform.position;
+            Vector3 targetPosition = startPosition + transform.forward * distance;
+            float elapsedTime = 0f;
+
+            while (elapsedTime < duration)
+            {
+                Vector3 newPos = Vector3.Lerp(startPosition, targetPosition, elapsedTime / duration); 
+                GetComponent<Rigidbody>().MovePosition(newPos);
+
+                elapsedTime += Time.deltaTime;
+                yield return null;
+            }
+
+            GetComponent<Rigidbody>().MovePosition(targetPosition);
         }
 
         public void ResetMoveParams()
