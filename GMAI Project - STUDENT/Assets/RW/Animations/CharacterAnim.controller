@@ -154,9 +154,9 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 120, y: 90, z: 0}
+  m_AnyStatePosition: {x: 30, y: 130, z: 0}
   m_EntryPosition: {x: 160, y: 230, z: 0}
-  m_ExitPosition: {x: 110, y: 320, z: 0}
+  m_ExitPosition: {x: 30, y: 340, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: -7135054548897627375}
 --- !u!1102 &-8026984146299732764
@@ -840,7 +840,7 @@ AnimatorController:
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 1
+    m_DefaultBool: 0
     m_Controller: {fileID: 0}
   - m_Name: Crouch
     m_Type: 4
@@ -852,7 +852,7 @@ AnimatorController:
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 1
+    m_DefaultBool: 0
     m_Controller: {fileID: 0}
   - m_Name: SwingMelee
     m_Type: 9
