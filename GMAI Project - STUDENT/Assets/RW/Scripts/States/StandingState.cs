@@ -38,6 +38,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private bool crouch;
         private bool block;
         private bool dodge;
+        private bool sprint;
+        private bool hit;
 
         public StandingState(Character character, StateMachine stateMachine) : base(character, stateMachine)
         {
@@ -46,6 +48,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public override void Enter()
         {
             base.Enter();
+            Debug.Log("Entered state: STANDING");
             speed = character.MovementSpeed;
             rotationSpeed = character.RotationSpeed;
             crouch = false;
@@ -60,6 +63,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             jump = Input.GetButtonDown("Jump");
             block = Input.GetButton("Fire2");
             dodge = Input.GetKeyDown(KeyCode.C);
+            sprint = Input.GetKey(KeyCode.LeftControl);
         }
 
         public override void LogicUpdate()
@@ -81,6 +85,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             {
                 stateMachine.ChangeState(character.dodge);
             }
+            else if (sprint)
+            {
+                stateMachine.ChangeState(character.sprint);
+            }
+
         }
 
     }

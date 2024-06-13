@@ -78,6 +78,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public JumpingState jumping;
         public BlockState block;
         public DodgeState dodge;
+        public SprintState sprint;
         public DrawState drawSword;
         public SwingState swingSword;
         public SheathState sheathSword;
@@ -105,6 +106,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         // added extra parameter ints for new player animation states
         public int blockParam => Animator.StringToHash("Block");
         public int dodgeParam => Animator.StringToHash("Dodge");
+        public int sprintParam => Animator.StringToHash("Sprint");
+        public int hitParam => Animator.StringToHash("TakeDamage");
 
         public float ColliderSize
         {
@@ -226,6 +229,11 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             shockWave.Play();
         }
 
+        public void TakeDamage()
+        {
+            TriggerAnimation(hitParam);
+        }
+
         public void SheathWeapon()
         {
             ParentCurrentWeapon(sheathTransform);
@@ -270,6 +278,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             jumping = new JumpingState(this, movementSM);
             block = new BlockState(this, movementSM);
             dodge = new DodgeState(this, movementSM);
+            sprint = new SprintState(this, movementSM);
             drawSword = new DrawState(this, weaponSM);
             swingSword = new SwingState(this, weaponSM);
             sheathSword = new SheathState(this, weaponSM);

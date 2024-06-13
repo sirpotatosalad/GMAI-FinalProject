@@ -5613,14 +5613,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2502a49acc6012b449b2aeab63210506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectionRange: 10
-  curiousRange: 20
+  detectionRange: 5
+  fleeDistance: 25
   playerStoppingDistance: 3.5
   pointStoppingDistance: 2
-  chaseSpeed: 9
-  investigateSpeed: 5.5
-  patrolSpeed: 4
+  chaseSpeed: 4.5
+  patrolSpeed: 2.5
   hitPoints: 3
+  isHit: 0
 --- !u!1 &1467021585
 GameObject:
   m_ObjectHideFlags: 0

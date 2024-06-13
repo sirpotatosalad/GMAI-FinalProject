@@ -29,7 +29,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             base.LogicUpdate();
             if (character.IsAnimatorPlaying(0, "Dodge"))
             {
-                isDodging = false;
+                
                 stateMachine.ChangeState(character.standing);
             }
         }
@@ -37,6 +37,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public override void Exit()
         {
             base.Exit();
+            isDodging = false;
         }
     }
 }

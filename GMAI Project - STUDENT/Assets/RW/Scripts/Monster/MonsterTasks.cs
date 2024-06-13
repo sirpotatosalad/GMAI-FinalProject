@@ -7,6 +7,8 @@ using Panda;
 public class MonsterTasks : MonoBehaviour
 {
 
+    private int attack1Param = Animator.StringToHash("Attack 01");
+
     private MonsterController monsterController;
     private Animator anim;
     private NavMeshAgent agent;
@@ -42,12 +44,9 @@ public class MonsterTasks : MonoBehaviour
     {
 
 
-        agent.speed = monsterController.investigateSpeed;
+        agent.speed = monsterController.patrolSpeed;
 
-        if (targetLocation == null)
-        {
-            targetLocation = player;
-        }
+        targetLocation = player;
 
         agent.stoppingDistance = monsterController.playerStoppingDistance;
 
@@ -66,14 +65,59 @@ public class MonsterTasks : MonoBehaviour
     }
 
     [Task]
+    public void ChasePlayer()
+    {
+        agent.speed = monsterController.chaseSpeed;
+
+        targetLocation = player;
+
+        if (!IsPlayerVisible())
+        {
+            agent.ResetPath();
+            Task.current.Fail();
+            return;
+        }
+
+        // sets the navmesh agent's destination to the player's transform position
+        if (agent.destination != targetLocation.transform.position)
+        {
+            agent.SetDestination(targetLocation.position);
+        }
+
+        // succeeds the task after reaching the specified stopping distance away from the player
+        if (!agent.pathPending && agent.remainingDistance < agent.stoppingDistance)
+        {
+            Task.current.Succeed();
+            targetLocation = null;
+        }
+    }
+
+    [Task]
     public void FleePlayer()
     {
+        isReturningToPatrol = true;
 
+        Vector3 fleeDir = (transform.position - player.position).normalized;
+        Vector3 fleePos = transform.position + fleeDir * monsterController.fleeDistance;
+
+        NavMeshHit hit;
+
+        if(NavMesh.SamplePosition(fleePos, out hit, monsterController.fleeDistance, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+            Task.current.Succeed();
+        }
+        else
+        {
+            Task.current.Fail();
+        }
     }
 
     [Task]
     public void Patrol()
     {
+
+
         if (targetLocation == null)
         {
 
@@ -132,13 +176,21 @@ public class MonsterTasks : MonoBehaviour
     [Task]
     public void Attack()
     {
+        monsterController.TriggerAnimation(attack1Param);
+        Task.current.Succeed();
+    }
+
+    [Task]
+    public void TakeDamage()
+    {
 
     }
 
     [Task]
     public void Idle()
     {
-
+        Debug.Log("Monster is currently idling");
+        Task.current.Succeed();
     }
 
     [Task]
@@ -146,14 +198,7 @@ public class MonsterTasks : MonoBehaviour
     {
         float distance = Vector3.Distance(transform.position, player.position);
 
-        if (distance < monsterController.playerStoppingDistance)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return distance < monsterController.playerStoppingDistance;
     }
 
     [Task]
@@ -161,13 +206,8 @@ public class MonsterTasks : MonoBehaviour
     {
         float distance = Vector3.Distance(transform.position, player.position);
 
-        if (distance < monsterController.detectionRange)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return distance < monsterController.detectionRange;
     }
+
+
 }

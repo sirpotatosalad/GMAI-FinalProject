@@ -1,14 +1,18 @@
 tree("Root")
 	fallback
-		IsDead
-		tree("Flee")
-		tree("Attack")
-		tree("Chase")
-		Patrol
-		Idle
+		while not IsDead
+			fallback
+				tree("Flee")
+				tree("Attack")
+				tree("Chase")
+				tree("Patrol")
+				Idle
+		Die
+
 
 tree("Flee")
 	sequence
+		IsPlayerVisible
 		IsLow
 		FleePlayer
 
@@ -18,7 +22,10 @@ tree("Attack")
 		GoToPlayer
 		Attack
 
+tree("Patrol")
+	while not IsPlayerVisible
+		Patrol
+
 tree("Chase")
-	sequence
-		IsPlayerVisible
-		GoToPlayer
+	while IsPlayerVisible
+		ChasePlayer
