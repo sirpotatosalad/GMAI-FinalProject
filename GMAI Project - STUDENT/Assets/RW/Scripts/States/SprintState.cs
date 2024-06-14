@@ -35,7 +35,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             {
                 stateMachine.ChangeState(character.jumping);
             }
-            else if (!sprintHeld)
+            else if (!sprintHeld || character.GetComponent<Rigidbody>().velocity == Vector3.zero)
             {
                 stateMachine.ChangeState(character.standing);
             }

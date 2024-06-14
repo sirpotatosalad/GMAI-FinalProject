@@ -29,6 +29,7 @@
  */
 
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace RayWenderlich.Unity.StatePatternInUnity
 {
@@ -85,7 +86,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             {
                 stateMachine.ChangeState(character.dodge);
             }
-            else if (sprint)
+            else if (sprint && character.GetComponent<Rigidbody>().velocity != Vector3.zero)
             {
                 stateMachine.ChangeState(character.sprint);
             }

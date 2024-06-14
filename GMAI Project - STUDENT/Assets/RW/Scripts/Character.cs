@@ -71,6 +71,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private int shootParam = Animator.StringToHash("Shoot");
         private int hardLanding = Animator.StringToHash("HardLand");
 
+        public bool IsInMonsterTerritory { get; private set; }
+
         public StateMachine movementSM;
         public StateMachine weaponSM;
         public StandingState standing;
@@ -285,6 +287,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 
             movementSM.Initialize(standing);
             weaponSM.Initialize(drawSword);
+
+            IsInMonsterTerritory = false;
         }
 
         private void Update()
@@ -302,6 +306,23 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             weaponSM.CurrentState.PhysicsUpdate();
         }
 
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("MonsterTerritory"))
+            {
+                Debug.Log("Entered territory");
+                IsInMonsterTerritory = true;
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("MonsterTerritory"))
+            {
+                Debug.Log("Exited territory");
+                IsInMonsterTerritory = false;
+            }
+        }
 
         #endregion
     }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Panda;
+using RayWenderlich.Unity.StatePatternInUnity;
 
 public class MonsterTasks : MonoBehaviour
 {
@@ -22,6 +23,13 @@ public class MonsterTasks : MonoBehaviour
     private int previousWaypoint;
     private Transform[] PatrolPoints;
     private bool isReturningToPatrol = false;
+    [Task]
+    private bool IsChasing = false;
+
+
+    [SerializeField]
+    private Transform patrolAreaCenter;
+    public float patrolAreaSize = 20f;
 
     // Start is called before the first frame update
     void Start()
@@ -30,13 +38,14 @@ public class MonsterTasks : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
 
-        PatrolPoints = WaypointManager.instance.Waypoints;
+        targetLocation = null;
+        PatrolPoints = WaypointManager.instance.MonsterWaypoints;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     [Task]
@@ -67,12 +76,17 @@ public class MonsterTasks : MonoBehaviour
     [Task]
     public void ChasePlayer()
     {
+        IsChasing = true;
+
         agent.speed = monsterController.chaseSpeed;
 
         targetLocation = player;
 
         if (!IsPlayerVisible())
         {
+            targetLocation = null;
+            isReturningToPatrol = true;
+            IsChasing = false;
             agent.ResetPath();
             Task.current.Fail();
             return;
@@ -87,9 +101,17 @@ public class MonsterTasks : MonoBehaviour
         // succeeds the task after reaching the specified stopping distance away from the player
         if (!agent.pathPending && agent.remainingDistance < agent.stoppingDistance)
         {
-            Task.current.Succeed();
             targetLocation = null;
+            IsChasing = false;
+            Task.current.Succeed();
         }
+    }
+
+    [Task]
+    public void ObservePlayer()
+    {
+        LookAtPlayer();
+        Task.current.Succeed();
     }
 
     [Task]
@@ -117,11 +139,18 @@ public class MonsterTasks : MonoBehaviour
     public void Patrol()
     {
 
+        agent.speed = monsterController.patrolSpeed;
+
+        if (isReturningToPatrol)
+        {
+            agent.isStopped = true;
+            targetLocation = null;
+        }
 
         if (targetLocation == null)
         {
 
-            agent.speed = monsterController.patrolSpeed;
+            agent.isStopped = false;
 
             // case for when bot's pathing deviates due to "discovering" a clue
             // instead of returning to the previous waypoint, it will go to the nearest one, and continue from there
@@ -154,12 +183,14 @@ public class MonsterTasks : MonoBehaviour
         }
 
 
+
         // as mentioned above, the following lines are similar to that of MoveToTaggedObject()
+
 
         agent.stoppingDistance = monsterController.pointStoppingDistance;
 
 
-        if (agent.destination != targetLocation.transform.position)
+        if (agent.destination != targetLocation.position)
         {
             agent.SetDestination(targetLocation.position);
         }
@@ -168,14 +199,17 @@ public class MonsterTasks : MonoBehaviour
         // once it reaches that set amount of time, it "gives up" on trying to search more - believing to have already seen everything
         if (!agent.pathPending && agent.remainingDistance < agent.stoppingDistance)
         {
-            Task.current.Succeed();
+            Task.current.Succeed(); 
             targetLocation = null;
         }
     }
 
+
     [Task]
     public void Attack()
     {
+        LookAtPlayer();
+
         monsterController.TriggerAnimation(attack1Param);
         Task.current.Succeed();
     }
@@ -205,9 +239,43 @@ public class MonsterTasks : MonoBehaviour
     bool IsPlayerVisible()
     {
         float distance = Vector3.Distance(transform.position, player.position);
+        if (distance > monsterController.detectionRange)
+        {
+            return false; // Player is out of detection range
+        }
 
-        return distance < monsterController.detectionRange;
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+        float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+
+        if (angleToPlayer < monsterController.detectionConeAngle / 2)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, directionToPlayer, out hit))
+            {
+                if (hit.transform == player)
+                {
+                    return true;
+                }
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    [Task]
+    bool IsPlayerInTerritory()
+    {
+        return player.GetComponent<Character>().IsInMonsterTerritory;
+    }
+
+    private void LookAtPlayer()
+    {
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(directionToPlayer);
+        transform.rotation = lookRotation;
     }
 
 
+    
 }

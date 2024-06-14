@@ -5,7 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Shootable
-  - PatrolPoint
+  - MonsterTerritory
+  - MonsterPatrol
+  - NPCPatrol
   layers:
   - Default
   - TransparentFX

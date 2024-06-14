@@ -7,7 +7,8 @@ public class WaypointManager : MonoBehaviour
 {
     public static WaypointManager instance;
 
-    public Transform[] Waypoints { get; private set; }
+    public Transform[] MonsterWaypoints { get; private set; }
+    public Transform[] NPCWaypoints { get; private set; }
 
     private void Awake()
     {
@@ -21,9 +22,9 @@ public class WaypointManager : MonoBehaviour
         }
 
 
-        Waypoints = GameObject.FindGameObjectsWithTag("PatrolPoint").Select(go => go.transform).OrderBy(go => go.name).ToArray();
+        MonsterWaypoints = GameObject.FindGameObjectsWithTag("MonsterPatrol").Select(go => go.transform).OrderBy(go => go.name).ToArray();
+        NPCWaypoints = GameObject.FindGameObjectsWithTag("NPCPatrol").Select(go => go.transform).OrderBy(go => go.name).ToArray();
 
-        Debug.Log("Waypoints initialized. Length: " + Waypoints.Length);
     }
 
 
@@ -36,7 +37,7 @@ public class WaypointManager : MonoBehaviour
         float closestDistance = Mathf.Infinity;
 
         // iterate through all waypoints in the created waypoint list
-        foreach (Transform waypoint in Waypoints)
+        foreach (Transform waypoint in MonsterWaypoints)
         {
             // find the distance between each waypoint and the given position (e.g., when bot position as additional parameters)
             float distance = Vector3.Distance(waypoint.position, position);

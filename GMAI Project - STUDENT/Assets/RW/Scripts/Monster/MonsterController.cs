@@ -9,7 +9,9 @@ public class MonsterController : MonoBehaviour
 {
 
     public float detectionRange = 10f;
+    public float detectionConeAngle = 60f;
     public float fleeDistance = 15f;
+    public float rotationSpeed = 20f;
 
     public float playerStoppingDistance = 3.0f;
     public float pointStoppingDistance = 2.0f;
@@ -31,6 +33,8 @@ public class MonsterController : MonoBehaviour
 
     [Task]
     public bool IsDead {  get; private set; }
+    [Task]
+    public bool IsMonsterInTerritory { get; private set; }
 
     [Task]
     public bool IsLow()
@@ -41,6 +45,7 @@ public class MonsterController : MonoBehaviour
     void Start()
     {
         IsDead = false;
+        IsMonsterInTerritory = true;
         anim = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
 
@@ -102,5 +107,20 @@ public class MonsterController : MonoBehaviour
             SetAnimationBool(walkParam, false);
         }
         
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("MonsterTerritory"))
+        {
+            Debug.Log("Monster in territory");
+            IsMonsterInTerritory = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        Debug.Log("Monster left territory");
+        IsMonsterInTerritory = false;
     }
 }

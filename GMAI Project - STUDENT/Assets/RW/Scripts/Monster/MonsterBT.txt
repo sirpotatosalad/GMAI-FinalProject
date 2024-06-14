@@ -5,6 +5,7 @@ tree("Root")
 				tree("Flee")
 				tree("Attack")
 				tree("Chase")
+				tree("Observe")
 				tree("Patrol")
 				Idle
 		Die
@@ -18,14 +19,27 @@ tree("Flee")
 
 tree("Attack")
 	sequence
+		IsPlayerInTerritory
 		IsPlayerInAttackRange
 		GoToPlayer
 		Attack
 
 tree("Patrol")
 	while not IsPlayerVisible
-		Patrol
+		while not IsChasing
+			Patrol
 
 tree("Chase")
-	while IsPlayerVisible
+	sequence
+		IsPlayerVisible
+		IsPlayerInTerritory
 		ChasePlayer
+
+tree("Observe")
+	while IsPlayerVisible
+		sequence
+			IsPlayerVisible
+			ObservePlayer
+			IsMonsterInTerritory
+			GoToPlayer
+	
