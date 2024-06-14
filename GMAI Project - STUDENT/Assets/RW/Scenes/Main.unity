@@ -6127,6 +6127,12 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1684516459}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &1526480639 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 422bd28e6c2ddab4fb06d1ef8f6d64e0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1684516459}
+  m_PrefabAsset: {fileID: 0}
 --- !u!136 &1526480641
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -6149,7 +6155,7 @@ CapsuleCollider:
   m_Radius: 0.35
   m_Height: 1.85
   m_Direction: 1
-  m_Center: {x: 0, y: 0.91, z: 0}
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!54 &1526480642
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6199,6 +6205,36 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1526480644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1526480638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5158b3d58b60b842a1bd0edfc012bee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 5
+  currentHealth: 0
+  walkSpeed: 3.5
+  runSpeed: 6.5
+  giveUpTimer: 15
+  suspiciousRange: 15
+  alertRange: 7
+  detectionConeAngle: 150
+  attackRange: 1.75
+  playerLastLocation: {fileID: 0}
+  agent: {fileID: 1526480643}
+  player: {fileID: 1252697823}
+  anim: {fileID: 1526480639}
+  blockParam: 1121630246
+  sprintParam: -399748991
+  lookParam: 2140057375
+  attackParam: 1080829965
+  hitParam: -339413771
 --- !u!1 &1557346060
 GameObject:
   m_ObjectHideFlags: 0
@@ -6338,17 +6374,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 422bd28e6c2ddab4fb06d1ef8f6d64e0,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 422bd28e6c2ddab4fb06d1ef8f6d64e0,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 422bd28e6c2ddab4fb06d1ef8f6d64e0,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 422bd28e6c2ddab4fb06d1ef8f6d64e0,
         type: 3}
@@ -6431,6 +6467,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1526480643}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 422bd28e6c2ddab4fb06d1ef8f6d64e0,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1526480644}
   m_SourcePrefab: {fileID: 100100000, guid: 422bd28e6c2ddab4fb06d1ef8f6d64e0, type: 3}
 --- !u!1001 &1712083588
 PrefabInstance:

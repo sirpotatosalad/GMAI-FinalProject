@@ -17,7 +17,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             base.Enter();
             Debug.Log("Entered state: SPRINT");
             character.SetAnimationBool(character.sprintParam, true);
-            speed = character.MovementSpeed * 1.5f;
+            speed = character.MovementSpeed * 2.1f;
             rotationSpeed = character.RotationSpeed * 0.75f;
         }
 

@@ -258,7 +258,7 @@ public class MonsterTasks : MonoBehaviour
                 }
                 return false;
             }
-            return true;
+            
         }
         return false;
     }

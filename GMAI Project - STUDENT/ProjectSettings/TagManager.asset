@@ -8,6 +8,7 @@ TagManager:
   - MonsterTerritory
   - MonsterPatrol
   - NPCPatrol
+  - Enemy
   layers:
   - Default
   - TransparentFX

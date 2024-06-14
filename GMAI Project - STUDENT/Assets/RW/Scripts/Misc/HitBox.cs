@@ -36,6 +36,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
     {
         public float damage;
 
-        //Do damage
+        private void OnTriggerEnter(Collider other)
+        {
+            
+        }
     }
 }
