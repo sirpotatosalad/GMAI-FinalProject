@@ -231,8 +231,14 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             shockWave.Play();
         }
 
-        public void TakeDamage()
+        public void TakeDamage(int damage)
         {
+            if (movementSM.CurrentState == block)
+            {
+                Debug.Log("Player - Damage Blocked");
+                return;
+            }
+
             TriggerAnimation(hitParam);
         }
 

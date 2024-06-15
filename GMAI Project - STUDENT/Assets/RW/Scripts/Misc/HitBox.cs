@@ -34,11 +34,15 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 {
     public class HitBox : MonoBehaviour
     {
-        public float damage;
+        public int attackDamage;
 
         private void OnTriggerEnter(Collider other)
         {
-            
+            IDamageable damageable = other.GetComponent<IDamageable>();
+            if (damageable != null)
+            {
+                damageable.TakeDamage(attackDamage);
+            }
         }
     }
 }

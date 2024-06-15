@@ -49,6 +49,7 @@ public class NPCInvestigateState : NPCState
         else if (npc.DetectionCone(npc.suspiciousRange))
         {
             npc.agent.SetDestination(npc.playerLastLocation.position);
+            isLookingAround = false;
         }
 
         if (!isLookingAround)

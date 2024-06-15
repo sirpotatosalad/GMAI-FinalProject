@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class NPCAttackState : NPCState
 {
+
+    private float attackTimer;
+
+    private Coroutine attackCoroutine;
+
     public NPCAttackState(NPCController npc, NPCStateMachine stateMachine) : base(npc, stateMachine) { }
 
     public override void Enter()
@@ -11,14 +16,24 @@ public class NPCAttackState : NPCState
         base.Enter();
         Debug.Log("NPC - Entered state: ATTACK");
         npc.agent.isStopped = true;
+
         AttackPlayer();
+
+        attackTimer = npc.attackDelay;
+        
     }
 
     private void AttackPlayer()
     {
-        Debug.Log("Attacking player");
         npc.LookAtPlayer();
         npc.TriggerAnimation(npc.attackParam);
+
+        if (attackCoroutine != null)
+        {
+            npc.StopCoroutine(attackCoroutine);
+        }
+
+        npc.StartCoroutine(HandleHitBox());
     }
 
     public override void LogicUpdate()
@@ -30,7 +45,27 @@ public class NPCAttackState : NPCState
             stateMachine.ChangeState(npc.chase);
         }
 
-        AttackPlayer();
+        attackTimer -= Time.deltaTime;
+
+        if (attackTimer <= 0f) 
+        {
+            AttackPlayer();
+
+            attackTimer = npc.attackDelay;
+        }
+
+    }
+
+    private IEnumerator HandleHitBox()
+    {
+        float activateTime = 0.2f;
+        float deactivateTime = 0.5f;
+
+        yield return new WaitForSeconds(activateTime);
+        npc.ActivateHitBox();
+
+        yield return new WaitForSeconds(deactivateTime);
+        npc.DeactivateHitBox();
     }
 
     public override void Exit()

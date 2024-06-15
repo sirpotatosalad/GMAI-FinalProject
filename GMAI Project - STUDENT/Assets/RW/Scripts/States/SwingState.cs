@@ -10,6 +10,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private bool swing = false;
         private bool sheath = false;
         private bool block = false;
+
+        private Coroutine swingCoroutine;
         // Start is called before the first frame update
         public SwingState(Character character, StateMachine stateMachine) : base(character, stateMachine) { }
 
@@ -24,6 +26,25 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         {
             SoundManager.Instance.PlaySound(SoundManager.Instance.meleeSwings);
             character.TriggerAnimation(swingParam);
+
+            if (swingCoroutine != null)
+            {
+                character.StopCoroutine(swingCoroutine);
+            }
+
+            character.StartCoroutine(HandleHitBox());
+        }
+
+        private IEnumerator HandleHitBox()
+        {
+            float activateTime = 0.2f;
+            float deactivateTime = 0.5f;
+
+            yield return new WaitForSeconds(activateTime);
+            character.ActivateHitBox();
+
+            yield return new WaitForSeconds(deactivateTime);
+            character.DeactivateHitBox();
         }
 
         public override void HandleInput()
