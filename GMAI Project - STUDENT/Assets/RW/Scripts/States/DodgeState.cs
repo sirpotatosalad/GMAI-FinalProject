@@ -12,6 +12,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 
         public DodgeState(Character character, StateMachine stateMachine) : base(character, stateMachine) { }
 
+        // trigger dodge param in anim controller on enter
         public override void Enter()
         {
             base.Enter();
@@ -20,7 +21,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             character.TriggerAnimation(character.dodgeParam);
         }
 
-
+        // switch back to standing state once dodge is "completed"
+        // i.e. timer is used to allow DodgeState's physics update to move the player character forward during dodge
         public override void LogicUpdate()
         {
             base.LogicUpdate();
@@ -33,6 +35,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             }
         }
 
+        // move player forward during dodge state
+        // emulates dodging when done alongside dodging anim triggered above in Enter()
         public override void PhysicsUpdate()
         {
             base.PhysicsUpdate();
@@ -43,7 +47,6 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         {
             base.Exit();
             dodgeTimer = 0f;
-            isDodging = false;
         }
     }
 }

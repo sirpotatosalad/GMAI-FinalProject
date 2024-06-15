@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Panda;
 using RayWenderlich.Unity.StatePatternInUnity;
+using UnityEngine.TextCore.Text;
 
 public class MonsterTasks : MonoBehaviour
 {
@@ -51,7 +52,15 @@ public class MonsterTasks : MonoBehaviour
     [Task]
     public void GoToPlayer()
     {
-
+        if (!IsPlayerVisible())
+        {
+            targetLocation = null;
+            isReturningToPatrol = true;
+            IsChasing = false;
+            agent.ResetPath();
+            Task.current.Fail();
+            return;
+        }
 
         agent.speed = monsterController.patrolSpeed;
 
@@ -110,6 +119,10 @@ public class MonsterTasks : MonoBehaviour
     [Task]
     public void ObservePlayer()
     {
+        if (!monsterController.IsMonsterInTerritory)
+        {
+            Task.current.Fail();
+        }
         LookAtPlayer();
         Task.current.Succeed();
     }
@@ -211,8 +224,10 @@ public class MonsterTasks : MonoBehaviour
         LookAtPlayer();
 
         monsterController.TriggerAnimation(attack1Param);
+
         Task.current.Succeed();
     }
+
 
     [Task]
     public void TakeDamage()
@@ -266,7 +281,7 @@ public class MonsterTasks : MonoBehaviour
     [Task]
     bool IsPlayerInTerritory()
     {
-        return player.GetComponent<Character>().IsInMonsterTerritory;
+        return player.GetComponent<RayWenderlich.Unity.StatePatternInUnity.Character>().IsInMonsterTerritory;
     }
 
     private void LookAtPlayer()

@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// essentially the provided State class copied over for use in the NPC FSM
+// protected variables replaced with their NPC counterparts
+// i.e. the NPCController and NPCStateMachine
 public abstract class NPCState
 {
     protected NPCController npc;

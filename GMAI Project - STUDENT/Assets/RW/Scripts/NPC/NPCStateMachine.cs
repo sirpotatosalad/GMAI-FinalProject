@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// essentially the provided StateMachine class copied over for use in the NPC FSM
 public class NPCStateMachine
 {
 

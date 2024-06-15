@@ -4,9 +4,12 @@ using UnityEngine;
 using Panda;
 using UnityEngine.AI;
 using System.Security.Permissions;
+using RayWenderlich.Unity.StatePatternInUnity;
 
 public class MonsterController : MonoBehaviour, IDamageable
 {
+
+    public Collider hitBox;
 
     public float detectionRange = 10f;
     public float detectionConeAngle = 60f;
@@ -67,6 +70,20 @@ public class MonsterController : MonoBehaviour, IDamageable
     {
         TriggerAnimation(takeDamageParam);
         currentHealth -= damage;
+    }
+
+    [Task]
+    public void ActivateHitBox()
+    {
+        hitBox.enabled = true;
+        Task.current.Succeed();
+    }
+
+    [Task]
+    public void DeactivateHitBox()
+    {
+        hitBox.enabled = false;
+        Task.current.Succeed();
     }
 
     [Task]

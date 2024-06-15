@@ -156,7 +156,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             anim.SetFloat(verticalMoveParam, speed * Time.deltaTime);
         }
 
-
+        // below is a variation of Move() modified for the Dodge action for the player
+        // takes in a specified distance (DodgeDistance), applying a forward velocity on the player character
+        // essentially, it moves the player character itself forward, wherein a dodge animation can be played over it to emulate the player dodging
         public void Dodge(float distance)
         {
 
@@ -225,14 +227,17 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             shockWave.Play();
         }
 
+        // handle damage taken from enemies
         public void TakeDamage(int damage)
         {
+            // block damage if player is in BlockState
             if (movementSM.CurrentState == block)
             {
                 Debug.Log("Player - Damage Blocked");
                 return;
             }
 
+            // trigger hit animation for player if damage is not blocked - i.e. player takes damage
             TriggerAnimation(hitParam);
         }
 
@@ -315,7 +320,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         }
 
 
-        // set IsInMonsterTerritory bool to its value if entered to or exited from
+        // set IsInMonsterTerritory bool to its value if entered to or exited from BT Creature's territory
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("MonsterTerritory"))

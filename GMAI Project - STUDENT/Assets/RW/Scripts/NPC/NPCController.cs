@@ -57,23 +57,6 @@ public class NPCController : MonoBehaviour, IDamageable
     public int hitParam = Animator.StringToHash("TakeDamage");
     
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        stateMachine = new NPCStateMachine();
-
-        patrol = new NPCPatrolState(this, stateMachine);
-        investigate = new NPCInvestigateState(this, stateMachine);
-        chase = new NPCChaseState(this, stateMachine);
-        attack = new NPCAttackState(this, stateMachine);
-        stunned = new NPCStunnedState(this, stateMachine);
-        block = new NPCBlockState(this, stateMachine);
-        dead = new NPCDeadState(this, stateMachine);
-
-        stateMachine.Initialize(patrol);
-
-        currentHealth = maxHealth;
-    }
 
     // making use of the IDamageable interface
     public void TakeDamage(int damage)
@@ -142,6 +125,7 @@ public class NPCController : MonoBehaviour, IDamageable
         return false;
     }
 
+    // same methods copied over from the provided Character script
 
     public void SetAnimationBool(int param, bool value)
     {
@@ -163,6 +147,8 @@ public class NPCController : MonoBehaviour, IDamageable
         npcHitBox.enabled = false;
     }
 
+
+     // same methods copied over from MonsterController script
     public void LookAtPlayer()
     {
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
@@ -184,11 +170,30 @@ public class NPCController : MonoBehaviour, IDamageable
             && anim.GetCurrentAnimatorStateInfo(animLayer).IsName(stateName);
     }
 
-    // Update is called once per frame
+    // since the NPC FSM uses the same State and StateMachine class structures, the monobehaviour callbacks are also similar in logic
+    void Start()
+    {
+        stateMachine = new NPCStateMachine();
+
+        patrol = new NPCPatrolState(this, stateMachine);
+        investigate = new NPCInvestigateState(this, stateMachine);
+        chase = new NPCChaseState(this, stateMachine);
+        attack = new NPCAttackState(this, stateMachine);
+        stunned = new NPCStunnedState(this, stateMachine);
+        block = new NPCBlockState(this, stateMachine);
+        dead = new NPCDeadState(this, stateMachine);
+
+        stateMachine.Initialize(patrol);
+
+        currentHealth = maxHealth;
+    }
+
     void Update()
     {
         stateMachine.CurrentState.HandleInput();
         stateMachine.CurrentState.LogicUpdate();
+
+        // update float parameters in anim controller during runtime
         UpdateAnimatorFloats();
     }
 
@@ -197,10 +202,15 @@ public class NPCController : MonoBehaviour, IDamageable
        stateMachine.CurrentState.PhysicsUpdate();
     }
 
+    // obtain velocity from NPC's NavMeshAgent component to assign to the float parameters in the NPC animator controller
     private void UpdateAnimatorFloats()
     {
         Vector3 velocity = agent.velocity;
 
+        // with some help from ChatGPT and looking through Unity documentation
+        // InverseTransformDirection essentially converts a direction vector from world space to local space relative to the GameObject's transform
+        // by converting the vector to local space, it is possible to obtain the values relative to the GameObject's orientation and scale
+        // in this case, we can obtain the forward and horizontal values relative to the objects movement, similar to obtain the horizontal input from the player
         Vector3 localVelocity = transform.InverseTransformDirection(velocity);
 
         anim.SetFloat(horizonalMoveParam, localVelocity.x);
