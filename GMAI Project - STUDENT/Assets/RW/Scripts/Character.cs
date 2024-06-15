@@ -96,6 +96,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public float CrouchSpeed => data.crouchSpeed;
         public float RotationSpeed => data.rotationSpeed;
         public float CrouchRotationSpeed => data.crouchRotationSpeed;
+        public float DodgeDistance => data.dodgeDistance;
         public GameObject MeleeWeapon => data.meleeWeapon;
         public GameObject ShootableWeapon => data.staticShootable;
         public float DiveCooldownTimer => data.diveCooldownTimer;
@@ -127,8 +128,9 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         // boolean to check if the animator is done playing an animation
         public bool IsAnimatorPlaying(int animLayer, string stateName)
         {
-            //checks if normalized time < 0, i.e. when an animation clip has completed playing
-            return anim.GetCurrentAnimatorStateInfo(animLayer).normalizedTime <1.0f 
+            // checks if normalized time < 0, i.e. when an animation clip has completed playing
+            // normalized time of an animation is between 0 and 1, with 1 being the end of an animation
+            return anim.GetCurrentAnimatorStateInfo(animLayer).normalizedTime < 1.0f 
                 // check for the specified state via its name
                 && anim.GetCurrentAnimatorStateInfo(animLayer).IsName(stateName);
         }
@@ -154,28 +156,20 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             anim.SetFloat(verticalMoveParam, speed * Time.deltaTime);
         }
 
-        public void Dodge(float distance, float duration)
-        {
-            StartCoroutine(DodgeCoroutine(distance, duration));
-        }
 
-        private IEnumerator DodgeCoroutine(float distance, float duration)
+        public void Dodge(float distance)
         {
-            Vector3 startPosition = transform.position;
-            Vector3 targetPosition = startPosition + transform.forward * distance;
-            float elapsedTime = 0f;
 
-            while (elapsedTime < duration)
+            Vector3 targetVelocity = distance * transform.forward;
+            targetVelocity.y = GetComponent<Rigidbody>().velocity.y;
+            GetComponent<Rigidbody>().velocity = targetVelocity;
+
+            if (targetVelocity.magnitude > 0.01f || GetComponent<Rigidbody>().angularVelocity.magnitude > 0.01f)
             {
-                Vector3 newPos = Vector3.Lerp(startPosition, targetPosition, elapsedTime / duration); 
-                GetComponent<Rigidbody>().MovePosition(newPos);
-
-                elapsedTime += Time.deltaTime;
-                yield return null;
+                SoundManager.Instance.PlayFootSteps(Mathf.Abs(distance));
             }
-
-            GetComponent<Rigidbody>().MovePosition(targetPosition);
         }
+
 
         public void ResetMoveParams()
         {
@@ -278,9 +272,12 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         #region MonoBehaviour Callbacks
         private void Start()
         {
+            // code below is as followed from the tutorials provided in LMS
+            // initialise new instances of each state machine and their states, also initialising which state belongs to which fsm
             movementSM = new StateMachine();
             weaponSM = new StateMachine();
 
+            // same as tutorial in LMS, simply added extra states as required by the assignment
             standing = new StandingState(this, movementSM);
             ducking = new DuckingState(this, movementSM);
             jumping = new JumpingState(this, movementSM);
@@ -291,27 +288,34 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             swingSword = new SwingState(this, weaponSM);
             sheathSword = new SheathState(this, weaponSM);
 
+            // initialise each fsm's initial starting state
             movementSM.Initialize(standing);
             weaponSM.Initialize(drawSword);
 
+            //initialise bools to their respective values
             IsInMonsterTerritory = false;
         }
 
         private void Update()
         {
+            // handle inputs in player states and any logic within that state during Update
             movementSM.CurrentState.HandleInput();
             movementSM.CurrentState.LogicUpdate();
 
+            // do the same for the weaponSM
             weaponSM.CurrentState.HandleInput();
             weaponSM.CurrentState.LogicUpdate();
         }
 
+        // as per usual, any physics based logic that occurs in the current state to be handled in FixedUpdate
         private void FixedUpdate()
         {
             movementSM.CurrentState.PhysicsUpdate();
             weaponSM.CurrentState.PhysicsUpdate();
         }
 
+
+        // set IsInMonsterTerritory bool to its value if entered to or exited from
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("MonsterTerritory"))

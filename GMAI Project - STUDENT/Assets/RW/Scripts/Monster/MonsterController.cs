@@ -5,7 +5,7 @@ using Panda;
 using UnityEngine.AI;
 using System.Security.Permissions;
 
-public class MonsterController : MonoBehaviour
+public class MonsterController : MonoBehaviour, IDamageable
 {
 
     public float detectionRange = 10f;
@@ -19,7 +19,8 @@ public class MonsterController : MonoBehaviour
     public float chaseSpeed = 9.0f;
     public float patrolSpeed = 4.0f;
 
-    public int hitPoints = 3;
+    public int maxHealth = 3;
+    private int currentHealth;
 
     private Animator anim;
     private int walkParam = Animator.StringToHash("Walk Forward");
@@ -27,7 +28,6 @@ public class MonsterController : MonoBehaviour
     private int dieParam = Animator.StringToHash("Die");
     private int takeDamageParam = Animator.StringToHash("Take Damage");
 
-    private bool hasDied = false;
 
     private NavMeshAgent agent;
 
@@ -39,7 +39,7 @@ public class MonsterController : MonoBehaviour
     [Task]
     public bool IsLow()
     {
-        return hitPoints <= 1;
+        return currentHealth <= 1;
     }
     // Start is called before the first frame update
     void Start()
@@ -50,6 +50,8 @@ public class MonsterController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
 
         agent.speed = patrolSpeed;
+
+        currentHealth = maxHealth;
     }
     public void SetAnimationBool(int param, bool value)
     {
@@ -61,20 +63,16 @@ public class MonsterController : MonoBehaviour
         anim.SetTrigger(param);
     }
 
-    public void TakeDamage()
+    public void TakeDamage(int damage)
     {
-        hitPoints--;
+        TriggerAnimation(takeDamageParam);
+        currentHealth -= damage;
     }
 
     [Task]
     public void Die()
     {
-        if (!hasDied)
-        {
-            TriggerAnimation(dieParam);
-            hasDied = true;
-        }
-        
+        TriggerAnimation(dieParam);
         Task.current.Succeed();
     }
 
@@ -82,7 +80,7 @@ public class MonsterController : MonoBehaviour
     void Update()
     {
 
-        if (hitPoints <= 0 && !IsDead)
+        if (currentHealth <= 0 && !IsDead)
         {
             agent.isStopped = true;
             IsDead = true;

@@ -25,8 +25,8 @@ tree("Attack")
 		Attack
 
 tree("Patrol")
-	while not IsPlayerVisible
-		while not IsChasing
+	while not IsChasing
+		while not IsPlayerVisible
 			Patrol
 
 tree("Chase")
@@ -38,7 +38,6 @@ tree("Chase")
 tree("Observe")
 	while IsPlayerVisible
 		sequence
-			IsPlayerVisible
 			ObservePlayer
 			IsMonsterInTerritory
 			GoToPlayer

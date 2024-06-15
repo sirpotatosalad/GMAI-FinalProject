@@ -7,6 +7,8 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 {
     public class DodgeState : GroundedState
     {
+        private float dodgeTimer;
+        private float dodgeDuration = 1.2f;
 
         public DodgeState(Character character, StateMachine stateMachine) : base(character, stateMachine) { }
 
@@ -14,29 +16,33 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         {
             base.Enter();
             Debug.Log("Entered state: DODGE");
-            Dodge();
-            isDodging = true;
+            dodgeTimer = 0f;
+            character.TriggerAnimation(character.dodgeParam);
         }
 
-        private void Dodge()
-        {
-            character.TriggerAnimation(character.dodgeParam);
-            character.Dodge(5, 1);
-        }
 
         public override void LogicUpdate()
         {
             base.LogicUpdate();
-            if (character.IsAnimatorPlaying(0, "Dodge"))
+            
+            dodgeTimer += Time.deltaTime;
+
+            if (dodgeTimer >= dodgeDuration)
             {
-                
                 stateMachine.ChangeState(character.standing);
             }
+        }
+
+        public override void PhysicsUpdate()
+        {
+            base.PhysicsUpdate();
+            character.Dodge(character.DodgeDistance);
         }
 
         public override void Exit()
         {
             base.Exit();
+            dodgeTimer = 0f;
             isDodging = false;
         }
     }
