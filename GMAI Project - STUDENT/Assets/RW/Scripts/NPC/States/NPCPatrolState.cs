@@ -1,3 +1,4 @@
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,9 @@ public class NPCPatrolState : NPCState
 
     public NPCPatrolState(NPCController npc, NPCStateMachine stateMachine) : base(npc, stateMachine) 
     {
+        // populate waypoint array with NPC waypoints from the waypoint manager instance
+        // can be done here as constructor is responsible for creating the initial state of the PatrolState object
+        // i.e. akin to the Start() method
         patrolWaypoints = WaypointManager.instance.NPCWaypoints;
     }
 
@@ -27,14 +31,18 @@ public class NPCPatrolState : NPCState
         base.LogicUpdate();
         PatrolArea();
 
+        // transition to Investigate state if NPC detects the player at suspiciousRange
+        // essentially mimicks the NPC noticing some sort of presence, but still not being sure if it was the player
+        // thus it will go to the player's last seen position and search around - discussed further in the Investigate state itself
         if (npc.DetectionCone(npc.suspiciousRange))
         {
-            //transition to investigate
             targetLocation = null;
             stateMachine.ChangeState(npc.investigate);
             Debug.Log("NPC - Suspicious of player presence");
         }
 
+        // transition to Chase state if NPC detects the player at alertRange
+        // i.e. the NPC has confirmed "seeing" the player character and intends to chase and attack                  
         if (npc.DetectionCone(npc.alertRange))
         {
             targetLocation = null;
@@ -60,14 +68,13 @@ public class NPCPatrolState : NPCState
 
         npc.agent.stoppingDistance = 1.5f;
 
-
+        // set currentWaypoint as destination if not already done so
         if (npc.agent.destination != targetLocation.position)
         {
             npc.agent.SetDestination(targetLocation.position);
         }
 
-        // for here, the bot will continually investigate the area until it doesn't find any clues within a set amount of time
-        // once it reaches that set amount of time, it "gives up" on trying to search more - believing to have already seen everything
+        // reset the targetLocation to null when reaching waypoint to allow the calculation of the next.
         if (!npc.agent.pathPending && npc.agent.remainingDistance < npc.agent.stoppingDistance)
         {
             targetLocation = null;

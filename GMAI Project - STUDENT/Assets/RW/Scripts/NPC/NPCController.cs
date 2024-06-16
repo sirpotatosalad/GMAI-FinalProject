@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-using Panda.Examples.PlayTag;
 using RayWenderlich.Unity.StatePatternInUnity;
 using System.Collections;
 using System.Collections.Generic;
@@ -58,31 +56,31 @@ public class NPCController : MonoBehaviour, IDamageable
     
 
 
-    // making use of the IDamageable interface
+    // making use of the IDamageable interface to handle damage taken from player
     public void TakeDamage(int damage)
     {
         float probability = Random.Range(0f,1f);
         Debug.Log("NPC - Hit taken");
 
+        // only handle damage if NPC is not blocking
         if (stateMachine.CurrentState != block)
         {
-            if (currentHealth <= 0)
+            // when NPC is not alerted to the player and attacked from behind
+            if (stateMachine.CurrentState != chase)
             {
-                stateMachine.ChangeState(dead);
-                return;
-            }
-
-            if (stateMachine.CurrentState != attack && stateMachine.CurrentState != stunned)
-            {
+                currentHealth -= damage;
                 stateMachine.ChangeState(chase);
             }
-
-            if (probability < blockChance && stateMachine.CurrentState == attack)
+            
+            // chance for NPC to block damage taken when being attacked by the player and is alerted
+            if (probability < blockChance && (stateMachine.CurrentState == attack || stateMachine.CurrentState == chase))
             {
                 stateMachine.ChangeState(block);
                 return;
             }
 
+            // chance for npc to get stunned when taking damage
+            // mimicks taking a "critical hit" from the player
             if (probability < stunChance)
             {
                 currentHealth -= damage;
@@ -91,25 +89,40 @@ public class NPCController : MonoBehaviour, IDamageable
                 return;
             }
 
+            // handle getting hit if players attack hits succesfully
             TriggerAnimation(hitParam);
             currentHealth -= damage;
+
+            // kill NPC and switch to dead state if health is 0
+            if (currentHealth <= 0)
+            {
+                stateMachine.ChangeState(dead);
+            }
         }
 
     }
 
+    // same method of detection as seen in MonsterTasks
+    // renamed for easier use and identification across the NPC states  
     public bool DetectionCone(float detectionRange)
     {
+        // check if player is in range to be detected
         float distance = Vector3.Distance(transform.position, player.position);
         if (distance > detectionRange)
         {
             return false;
         }
 
+        // check the angle value from the NPC's forward vector to the player's position
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
 
+        // check if angle from NPC forward vector to player is within the NPC's detection cone
+        // detectionConeAngle / 2, as the angle is taken from the NPC's forward vector
+        // i.e. if cone is 150 deg wide, then NPC can only see the player 75 deg away from its forward vector
         if (angleToPlayer < detectionConeAngle / 2)
         {
+            // make a raycast to check for any obstacles between player and NPC
             RaycastHit hit;
             if (Physics.Raycast(transform.position, directionToPlayer, out hit))
             {
@@ -147,6 +160,14 @@ public class NPCController : MonoBehaviour, IDamageable
         npcHitBox.enabled = false;
     }
 
+    public bool IsAnimatorPlaying(int animLayer, string stateName)
+    {
+        //checks if normalized time < 1, i.e. when an animation clip has completed playing
+        return anim.GetCurrentAnimatorStateInfo(animLayer).normalizedTime < 1.0f
+            // check for the specified state via its name
+            && anim.GetCurrentAnimatorStateInfo(animLayer).IsName(stateName);
+    }
+
 
      // same methods copied over from MonsterController script
     public void LookAtPlayer()
@@ -156,21 +177,8 @@ public class NPCController : MonoBehaviour, IDamageable
         transform.rotation = lookRotation;
     }
 
-    public bool IsPlayerInRange(float range)
-    {
-        float distance = Vector3.Distance(transform.position, player.position);
-        return distance <= range;
-    }
-
-    public bool IsAnimatorPlaying(int animLayer, string stateName)
-    {
-        //checks if normalized time < 1, i.e. when an animation clip has completed playing
-        return anim.GetCurrentAnimatorStateInfo(animLayer).normalizedTime < 1.0f
-            // check for the specified state via its name
-            && anim.GetCurrentAnimatorStateInfo(animLayer).IsName(stateName);
-    }
-
-    // since the NPC FSM uses the same State and StateMachine class structures, the monobehaviour callbacks are also similar in logic
+    // since the NPC FSM uses the same State and StateMachine class structures as the player character
+    // the monobehaviour callbacks are also similar in logic to the provided Character script
     void Start()
     {
         stateMachine = new NPCStateMachine();
@@ -207,12 +215,13 @@ public class NPCController : MonoBehaviour, IDamageable
     {
         Vector3 velocity = agent.velocity;
 
-        // with some help from ChatGPT and looking through Unity documentation
+        //  implemented with some help from ChatGPT and looking through Unity documentation
         // InverseTransformDirection essentially converts a direction vector from world space to local space relative to the GameObject's transform
         // by converting the vector to local space, it is possible to obtain the values relative to the GameObject's orientation and scale
         // in this case, we can obtain the forward and horizontal values relative to the objects movement, similar to obtain the horizontal input from the player
         Vector3 localVelocity = transform.InverseTransformDirection(velocity);
 
+        //set respective localVelocity values to their animator float parameters
         anim.SetFloat(horizonalMoveParam, localVelocity.x);
         anim.SetFloat(verticalMoveParam, localVelocity.z);
     }

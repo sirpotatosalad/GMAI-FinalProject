@@ -39,6 +39,8 @@ public class MonsterController : MonoBehaviour, IDamageable
     [Task]
     public bool IsMonsterInTerritory { get; private set; }
 
+    // checks current health and sets IsLow bool based on creature health
+    // used for FleePlayer task in MonsterTasks
     [Task]
     public bool IsLow()
     {
@@ -56,6 +58,9 @@ public class MonsterController : MonoBehaviour, IDamageable
 
         currentHealth = maxHealth;
     }
+
+    // methods taken and copied from provided Character script in project
+    // method names and functions are pretty self-explanatory, e.g. setting animator triggers and booleans
     public void SetAnimationBool(int param, bool value)
     {
         anim.SetBool(param, value);
@@ -64,12 +69,6 @@ public class MonsterController : MonoBehaviour, IDamageable
     public void TriggerAnimation(int param)
     {
         anim.SetTrigger(param);
-    }
-
-    public void TakeDamage(int damage)
-    {
-        TriggerAnimation(takeDamageParam);
-        currentHealth -= damage;
     }
 
     [Task]
@@ -86,6 +85,14 @@ public class MonsterController : MonoBehaviour, IDamageable
         Task.current.Succeed();
     }
 
+    // TakeDamage method for damageable interface
+    public void TakeDamage(int damage)
+    {
+        TriggerAnimation(takeDamageParam);
+        currentHealth -= damage;
+    }
+
+    // action to make creature "die" once health reaches 
     [Task]
     public void Die()
     {
@@ -96,13 +103,15 @@ public class MonsterController : MonoBehaviour, IDamageable
     // Update is called once per frame
     void Update()
     {
-
+        // check current creature health, setting IsDead to true if bot has reached 0 hp
         if (currentHealth <= 0 && !IsDead)
         {
             agent.isStopped = true;
             IsDead = true;
         }
 
+        // sets provided creature's animator bool parameters based on agent's current speed
+        // i.e. sets running/walking parameter bools when bot is patrolling/chasing the player
         if (agent.velocity.magnitude > 0)
         {
             if (agent.speed == chaseSpeed)
@@ -124,6 +133,8 @@ public class MonsterController : MonoBehaviour, IDamageable
         
     }
 
+    // check for bot collision within its territory,
+    // setting IsMonsterInTerritory bool to its appropriate values as well
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("MonsterTerritory"))

@@ -38,6 +38,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
 
         private void OnTriggerEnter(Collider other)
         {
+            // finds the collided gameObject's IDamageable interface, calling its TakeDamage() method if found
             IDamageable damageable = other.GetComponent<IDamageable>();
             if (damageable != null)
             {

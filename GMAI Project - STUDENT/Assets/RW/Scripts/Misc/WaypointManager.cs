@@ -21,13 +21,13 @@ public class WaypointManager : MonoBehaviour
             Destroy(gameObject);
         }
 
-
+        // made use of the previously provided code for waypoints in the lecture slides
         MonsterWaypoints = GameObject.FindGameObjectsWithTag("MonsterPatrol").Select(go => go.transform).OrderBy(go => go.name).ToArray();
         NPCWaypoints = GameObject.FindGameObjectsWithTag("NPCPatrol").Select(go => go.transform).OrderBy(go => go.name).ToArray();
 
     }
 
-
+    // copied from my Assignment 2 bot behaviour scripts
     public Transform GetClosestWaypoint(Vector3 position)
     {
         // set a transform variable to store the closest waypoint

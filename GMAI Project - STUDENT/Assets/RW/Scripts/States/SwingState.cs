@@ -13,7 +13,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         private bool block = false;
 
         // reference to THIS state's coroutine instance
-        // i.e. the coroutine managining HandleHitBox below
+        // i.e. the coroutine managining HandleHitBox
         private Coroutine swingCoroutine;
 
         public SwingState(Character character, StateMachine stateMachine) : base(character, stateMachine) { }
@@ -32,7 +32,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
             SoundManager.Instance.PlaySound(SoundManager.Instance.meleeSwings);
             character.TriggerAnimation(swingParam);
             
-            // check if the coroutine instance in SwingState managing HandleHitBox is working
+            // check if the coroutine instance in SwingState managing HandleHitBox is running
             // if so, stop it
             if (swingCoroutine != null)
             {

@@ -39,6 +39,6 @@ tree("Observe")
 	while IsPlayerVisible
 		sequence
 			ObservePlayer
-			IsMonsterInTerritory
-			GoToPlayer
+			while IsMonsterInTerritory
+				GoToPlayer
 	

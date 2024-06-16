@@ -10,6 +10,7 @@ public class NPCBlockState : NPCState
     {
         base.Enter();
         Debug.Log("NPC - Attack blocked");
+        // trigger NPC's blocking animation upon entering state
         npc.TriggerAnimation(npc.blockParam);
     }
 
@@ -17,6 +18,7 @@ public class NPCBlockState : NPCState
     {
         base.LogicUpdate();
 
+        // transition back to attack state after block animation finishes playing 
         if (!npc.IsAnimatorPlaying(0, "Block"))
         {
             stateMachine.ChangeState(npc.attack);
