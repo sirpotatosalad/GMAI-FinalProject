@@ -914,6 +914,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Boximon Fiery
       objectReference: {fileID: 0}
+    - target: {fileID: 1975194375736644, guid: 128a80094e00bf34fa2555766a7eea0e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4744222756475520, guid: 128a80094e00bf34fa2555766a7eea0e, type: 3}
       propertyPath: m_LocalPosition.x
       value: -6.56
@@ -7908,7 +7912,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 422bd28e6c2ddab4fb06d1ef8f6d64e0,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 422bd28e6c2ddab4fb06d1ef8f6d64e0,
         type: 3}

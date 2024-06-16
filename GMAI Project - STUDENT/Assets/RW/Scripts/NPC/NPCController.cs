@@ -32,8 +32,8 @@ public class NPCController : MonoBehaviour, IDamageable
     public Transform player;
     public Animator anim;
     [SerializeField]
-    private Collider npcHitBox;
 
+    private Collider npcHitBox;
     public NPCStateMachine stateMachine;
     public NPCPatrolState patrol;
     public NPCInvestigateState investigate;

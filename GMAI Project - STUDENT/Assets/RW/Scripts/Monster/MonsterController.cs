@@ -88,8 +88,11 @@ public class MonsterController : MonoBehaviour, IDamageable
     // TakeDamage method for damageable interface
     public void TakeDamage(int damage)
     {
-        TriggerAnimation(takeDamageParam);
-        currentHealth -= damage;
+        if (!IsDead)
+        {
+            TriggerAnimation(takeDamageParam);
+            currentHealth -= damage;
+        }
     }
 
     // action to make creature "die" once health reaches 

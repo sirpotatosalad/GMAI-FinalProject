@@ -62,6 +62,7 @@ namespace RayWenderlich.Unity.StatePatternInUnity
         public override void PhysicsUpdate()
         {
             base.PhysicsUpdate();
+            // prevent player from moving around if they are blocking or dodging
             if (stateMachine.CurrentState != character.block || stateMachine.CurrentState != character.dodge)
             {
                 character.Move(verticalInput * speed, horizontalInput * speed);
